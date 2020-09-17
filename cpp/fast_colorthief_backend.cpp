@@ -42,11 +42,6 @@ std::vector<color_t> get_palette(py::array_t<uint8_t,  py::array::c_style> image
             }
         }
     }
-
-    //std::cout << "Pixels count: " << pixels.size() << std::endl;
-    //for (int i=0; i<20; ++i) {
-    //    std::cout << int(std::get<0>(pixels[i])) << " " << int(std::get<1>(pixels[i])) << " " << int(std::get<2>(pixels[i])) << std::endl;
-    //}
     CMap cmap = quantize(pixels, color_count);
     return cmap.pallete();
 }
@@ -55,24 +50,20 @@ int get_color_index(int r, int g, int b) {
     return (r << (2 * SIGBITS)) + (g << SIGBITS) + b;
 }
 
-std::unordered_map<int, int> get_histo(const std::vector<color_t>& pixels) {
-    std::unordered_map<int, int> histo;
+std::vector<int> get_histo(const std::vector<color_t>& pixels) {
+    std::vector<int> histo(std::pow(2, 3 * SIGBITS), 0);
 
     for (const color_t& pixel : pixels) {
         int rval = std::get<0>(pixel) >> RSHIFT;
         int gval = std::get<1>(pixel) >> RSHIFT;
         int bval = std::get<2>(pixel) >> RSHIFT;
         int index = get_color_index(rval, gval, bval);
-
-        if (histo.count(index) == 0) {
-            histo[index] = 0;
-        }
         histo[index] += 1;
     }
     return histo;
 }
 
-VBox vbox_from_pixels(const std::vector<color_t>& pixels, std::unordered_map<int, int>& histo) {
+VBox vbox_from_pixels(const std::vector<color_t>& pixels, std::vector<int>& histo) {
     int rmin = 1000000;
     int rmax = 0;
     int gmin = 1000000;
@@ -95,7 +86,7 @@ VBox vbox_from_pixels(const std::vector<color_t>& pixels, std::unordered_map<int
     return VBox(rmin, rmax, gmin, gmax, bmin, bmax, &histo);
 }
         
-std::tuple<std::optional<VBox>, std::optional<VBox>> median_cut_apply(std::unordered_map<int, int>& histo, VBox vbox) {
+std::tuple<std::optional<VBox>, std::optional<VBox>> median_cut_apply(std::vector<int>& histo, VBox vbox) {
     int rw = vbox.r2 - vbox.r1 + 1;
     int gw = vbox.g2 - vbox.g1 + 1;
     int bw = vbox.b2 - vbox.b1 + 1;
@@ -117,8 +108,6 @@ std::tuple<std::optional<VBox>, std::optional<VBox>> median_cut_apply(std::unord
             for (int j=vbox.g1; j<vbox.g2 + 1; j++) {
                 for (int k=vbox.b1; k<vbox.b2 + 1; k++) {
                     int index = get_color_index(i, j, k);
-                    //if (histo.count(index) > 0)
-                    //    sum += histo.at(index);
                     sum += histo[index];
                 }
             }
@@ -132,8 +121,6 @@ std::tuple<std::optional<VBox>, std::optional<VBox>> median_cut_apply(std::unord
             for (int j=vbox.r1; j<vbox.r2 + 1; j++) {
                 for (int k=vbox.b1; k<vbox.b2 + 1; k++) {
                     int index = get_color_index(j, i, k);
-                    //if (histo.count(index) > 0)
-                    //    sum += histo.at(index);
                     sum += histo[index];
                 }
             }
@@ -147,8 +134,6 @@ std::tuple<std::optional<VBox>, std::optional<VBox>> median_cut_apply(std::unord
             for (int j=vbox.r1; j<vbox.r2 + 1; j++) {
                 for (int k=vbox.g1; k<vbox.g2 + 1; k++) {
                     int index = get_color_index(j, k, i);
-                    //if (histo.count(index) > 0)
-                    //    sum += histo.at(index);
                     sum += histo[index];
                 }
             }
@@ -187,17 +172,12 @@ std::tuple<std::optional<VBox>, std::optional<VBox>> median_cut_apply(std::unord
                 d2 = std::max(dim1_val, int(i - 1 - left / 2.0));
             }
 
-            //std::cout << "Dim1_val: " << dim1_val << " i: " << i << std::endl;
-            //std::cout << "Right: " << right << " left: " << left << " d2: " << d2 << std::endl;
-
             while (partialsum.count(d2) == 0) {
                 d2 += 1;
-                //std::cout << "Partial sum does not contain " << d2 - 1 << "increasing d2 to " << d2 << std::endl;
             }
 
             int count2 = lookaheadsum[d2];
             while (count2 == 0 && partialsum.count(d2 - 1) > 0) {
-                //std::cout << "Partial sum does not contain " << d2 - 1 << "decreasing d2 to " << d2 - 1 << " count2=" << count2 << std::endl;
                 d2 -= 1;
             }
             count2 = lookaheadsum[d2];
@@ -230,8 +210,7 @@ bool box_count_volume_compare(VBox& a, VBox& b) {
 }
 
 
-void iter(PQueue<VBox, decltype(box_count_compare)>& lh, double target, std::unordered_map<int, int>& histo) {
-    //std::cout << target << std::endl;
+void iter(PQueue<VBox, decltype(box_count_compare)>& lh, double target, std::vector<int>& histo) {
     int n_color = 1;
     int n_iter = 0;
     while (n_iter < MAX_ITERATION) {
@@ -242,14 +221,7 @@ void iter(PQueue<VBox, decltype(box_count_compare)>& lh, double target, std::uno
             continue;
         }
 
-        //std::cout << "Input: " << vbox.r1 << "-" << vbox.r2 << ", " << vbox.g1 << "-" << vbox.g2 << ", " << vbox.b1 << "-" << vbox.b2 << std::endl;
         auto [vbox1, vbox2] = median_cut_apply(histo, vbox);
-        
-        if (n_iter < 10) {
-            //std::cout << n_iter << " n_color: " << n_color << std::endl;
-            //std::cout << "VBOX1 " << vbox1.value().r1 << "-" << vbox1.value().r2 << ", " << vbox1.value().g1 << "-" << vbox1.value().g2 << ", " << vbox1.value().b1 << "-" << vbox1.value().b2 << " count: " << vbox1.value().count() << std::endl;
-            //std::cout << "VBOX2 " << vbox2.value().r1 << "-" << vbox2.value().r2 << ", " << vbox2.value().g1 << "-" << vbox2.value().g2 << ", " << vbox2.value().b1 << "-" << vbox2.value().b2 << " count: " << vbox2.value().count() << std::endl;
-        }
 
         if (!vbox1) {
             throw std::runtime_error("vbox1 not defined; shouldnt happen!");
@@ -260,10 +232,7 @@ void iter(PQueue<VBox, decltype(box_count_compare)>& lh, double target, std::uno
             lh.push(vbox2.value());
             n_color += 1;
         }
-        if ((double)n_color >= target) {
-            return;
-        }
-        if (n_iter > MAX_ITERATION) {
+        if ((double)n_color >= target || n_iter > MAX_ITERATION) {
             return;
         }
         n_iter += 1;
@@ -277,10 +246,8 @@ CMap quantize(std::vector<color_t>& pixels, int max_color) {
     if (max_color < 2 || max_color > 256)
         throw std::runtime_error("Wrong number of max colors when quantize.");
 
-    std::unordered_map<int, int> histo = get_histo(pixels);
+    std::vector<int> histo = get_histo(pixels);
     VBox vbox = vbox_from_pixels(pixels, histo);
-
-    //std::cout << "First VBOX " << vbox.r1 << "-" << vbox.r2 << ", " << vbox.g1 << "-" << vbox.g2 << ", " << vbox.b1 << "-" << vbox.b2 << std::endl;
 
     PQueue<VBox, decltype(box_count_compare)> pq(box_count_compare);
     pq.push(vbox);

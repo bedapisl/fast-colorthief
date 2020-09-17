@@ -4,7 +4,7 @@
 
 class VBox {
 public:
-    VBox(int r1, int r2, int g1, int g2, int b1, int b2, std::unordered_map<int, int>* histo) :
+    VBox(int r1, int r2, int g1, int g2, int b1, int b2, std::vector<int>* histo) :
         r1(r1), r2(r2), g1(g1), g2(g2), b1(b1), b2(b2), histo(histo),
         avg_initialized(false), count_initialized(false) {}
 
@@ -38,10 +38,6 @@ public:
             for (int j=g1; j<g2 + 1; j++) {
                 for (int k=b1; k<b2 + 1; k++) {
                     int histoindex = get_color_index(i, j, k);
-                    //int hval = 0;
-                    //if (histo->count(histoindex) > 0) {
-                    //    hval = (*histo)[histoindex];
-                    //}
                     int hval = (*histo)[histoindex];
                     ntot += hval;
                     r_sum += hval * (i + 0.5) * mult;
@@ -75,9 +71,6 @@ public:
             for (int j=g1; j<g2 + 1; j++) {
                 for (int k=b1; k<b2 + 1; k++) {
                     int index = get_color_index(i, j, k);
-                    //if (histo->count(index) > 0) {
-                    //    npix += (*histo)[index];
-                    //}
                     npix += (*histo)[index];
                 }
             }
@@ -92,7 +85,7 @@ public:
     int g2;
     int b1;
     int b2;
-    std::unordered_map<int, int>* histo;
+    std::vector<int>* histo;
 
     color_t avg_cache;
     bool avg_initialized;
@@ -121,14 +114,6 @@ public:
     void push(const T& o) {
         contents.push_back(o);
         sorted = false;
-    }
-
-    T peek(int index = -1) {
-        if (!sorted) 
-            sort();
-        if (index == -1)
-            index = contents.size() - 1;
-        return contents[index];
     }
 
     T pop() {
@@ -164,7 +149,6 @@ public:
     }
 
     void push(VBox&& box) {
-        //std::cout << "Pushing box " << box.r1 << "-" << box.r2 << ", " << box.g1 << "-" << box.g2 << ", " << box.b1 << "-" << box.b2 << " with avg: (" << (int)std::get<0>(box.avg()) << ", " << (int)std::get<1>(box.avg()) << ", " << (int)std::get<2>(box.avg()) << ")" << std::endl;
         vboxes.push({box, box.avg()});
     }
 

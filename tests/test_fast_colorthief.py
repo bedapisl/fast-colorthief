@@ -27,20 +27,29 @@ def print_speed():
     image = image.convert('RGBA')
     image = np.array(image).astype(np.uint8)
 
+    iterations = 10
+
     start = time.time()
 
-    for i in range(1):
-        fast_colorthief.get_palette(image, 5, 10)
+    for i in range(iterations):
+        fast_colorthief.get_palette(image)
 
-    print(f'CPP {time.time() - start}')
+    print(f'CPP numpy {(time.time() - start) / iterations}')
 
-    colorthief_orig = colorthief.ColorThief('tests/veverka_lidl.jpg')
     start = time.time()
 
-    for i in range(1):
-        colorthief_orig.get_palette(5, 10)
+    for i in range(iterations):
+        fast_colorthief.get_palette('tests/veverka_lidl.jpg')
 
-    print(f'Python {time.time() - start}')
+    print(f'CPP image path {(time.time() - start) / iterations}')
+
+    start = time.time()
+
+    for i in range(iterations):
+        colorthief_orig = colorthief.ColorThief('tests/veverka_lidl.jpg')
+        colorthief_orig.get_palette()
+
+    print(f'Python image path {(time.time() - start) / iterations}')
 
 
 if __name__ == '__main__':
