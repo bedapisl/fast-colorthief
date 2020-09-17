@@ -1,6 +1,6 @@
 # Fast colortheif
 
-A Python module for selecting most dominant colors in the image. Based on https://github.com/fengsp/color-thief-py, but is much faster.
+A Python module for selecting most dominant colors in the image. Based on https://github.com/fengsp/color-thief-py but faster.
 
 ## Installation
 ```
