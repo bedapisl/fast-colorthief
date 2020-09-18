@@ -76,7 +76,7 @@ setup(
     description='Dominant colors in image',
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github/bedapisl/fast-colorthief",
+    url="https://github.com/bedapisl/fast-colorthief",
     license="MIT",
     ext_modules=[CMakeExtension('fast_colorthief_backend')],
     py_modules=['fast_colorthief', 'version'],
