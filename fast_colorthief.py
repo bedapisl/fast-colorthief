@@ -1,8 +1,9 @@
 from PIL import Image
 import fast_colorthief_backend
 import numpy as np
+import version
 
-__version__ = "0.0.1"
+__version__ = version.__version__
 
 
 def get_dominant_color(image, quality):

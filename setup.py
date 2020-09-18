@@ -9,7 +9,7 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 from distutils.version import LooseVersion
 
-import fast_colorthief
+import version
 
 HERE = pathlib.Path(__file__).parent
 
@@ -70,7 +70,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='fast-colorthief',
-    version=fast_colorthief.__version__,
+    version=version.__version__,
     author='Bedrich Pisl',
     author_email='bedapisl@gmail.com',
     description='Dominant colors in image',
@@ -79,7 +79,7 @@ setup(
     url="https://github/bedapisl/fast-colorthief",
     license="MIT",
     ext_modules=[CMakeExtension('fast_colorthief_backend')],
-    py_modules=['fast_colorthief'],
+    py_modules=['fast_colorthief', 'version'],
     install_requires=['Pillow', 'numpy'],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
