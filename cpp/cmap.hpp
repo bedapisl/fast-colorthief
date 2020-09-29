@@ -93,11 +93,15 @@ public:
     bool count_initialized;
 };
 
+std::ostream &operator<<(std::ostream &os, VBox& box) {
+    os << box.r1 << "-" << box.r2 << " " << box.g1 << "-" << box.g2 << " " << box.b1 << "-" << box.b2 << " Count: " << box.count() << " Volume: " << box.volume() << " Count * volume: " << uint64_t(box.count()) * uint64_t(box.volume());
+}
+
 
 inline bool cmap_compare(const std::tuple<VBox, color_t>& a, const std::tuple<VBox, color_t>& b) {
     VBox box1 = std::get<0>(a);
     VBox box2 = std::get<0>(b);
-    return box1.count() * box1.volume() < box2.count() * box2.volume();
+    return uint64_t(box1.count()) * uint64_t(box1.volume()) < uint64_t(box2.count()) * uint64_t(box2.volume());
 }
 
 

@@ -17,7 +17,6 @@ def test_same_output():
     fast_palette = fast_colorthief.get_palette(image_path, 5, 10)
     colorthief_orig = colorthief.ColorThief(image_path)
     original_palette = colorthief_orig.get_palette(5, 10)
-
     assert (fast_palette == original_palette)
 
 
@@ -54,3 +53,38 @@ def print_speed():
 
 if __name__ == '__main__':
     print_speed()
+
+    if False:
+        wrong_original = []
+        exceptions = []
+
+        from os import listdir
+        from os.path import isfile, join
+
+        path = '/data/logo_detection/dataset_version_10/train/images'
+
+        for i, image_path in enumerate([join(path, f) for f in listdir(path)]):
+            print(f"{i} {image_path}")
+
+            try:
+                fast_palette = fast_colorthief.get_palette(image_path, 5, 10)
+                colorthief_orig = colorthief.ColorThief(image_path)
+                original_palette = colorthief_orig.get_palette(5, 10)
+            except RuntimeError:
+                exceptions.append(image_path)
+                continue
+
+            wrong_original_output = False
+            for rgb in original_palette:
+                if max(rgb) >= 256:  # error in original colorthief
+                    wrong_original_output = True
+                    break
+
+            if wrong_original_output:
+                wrong_original.append(image_path)
+                continue
+
+            assert (fast_palette == original_palette)
+
+        print(f'Wrong original output: {wrong_original}')
+        print(f'Exception raised: {exceptions}')

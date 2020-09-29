@@ -172,14 +172,15 @@ std::tuple<std::optional<VBox>, std::optional<VBox>> median_cut_apply(std::vecto
                 d2 = std::max(dim1_val, int(i - 1 - left / 2.0));
             }
 
-            while (partialsum.count(d2) == 0) {
+            while (!(partialsum.count(d2) > 0 && partialsum[d2] > 0)) {
                 d2 += 1;
             }
 
             int count2 = lookaheadsum[d2];
-            while (count2 == 0 && partialsum.count(d2 - 1) > 0) {
+            while (count2 == 0 && partialsum.count(d2 - 1) > 0 && partialsum[d2 - 1] > 0) {
                 d2 -= 1;
             }
+
             count2 = lookaheadsum[d2];
     
             if (do_cut_color == 'r') {
@@ -206,7 +207,7 @@ bool box_count_compare(VBox& a, VBox& b) {
 
 
 bool box_count_volume_compare(VBox& a, VBox& b) {
-    return a.count() * a.volume() < b.count() * b.volume();
+    return uint64_t(a.count()) * uint64_t(a.volume()) < uint64_t(b.count()) * uint64_t(b.volume());
 }
 
 
