@@ -95,6 +95,7 @@ public:
 
 std::ostream &operator<<(std::ostream &os, VBox& box) {
     os << box.r1 << "-" << box.r2 << " " << box.g1 << "-" << box.g2 << " " << box.b1 << "-" << box.b2 << " Count: " << box.count() << " Volume: " << box.volume() << " Count * volume: " << uint64_t(box.count()) * uint64_t(box.volume());
+    return os;
 }
 
 
