@@ -20,7 +20,7 @@ jobs:
         run: 
           ls /opt/python
       - name: Install setuptools
-        run:
+        run: |
           /opt/python/cp38-cp38/bin/python -m pip install setuptools
           /opt/python/cp39-cp39/bin/python -m pip install setuptools
           /opt/python/cp310-cp310/bin/python -m pip install setuptools
