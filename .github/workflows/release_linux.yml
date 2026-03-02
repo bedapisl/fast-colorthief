@@ -23,6 +23,11 @@ jobs:
       - name: List available Python versions
         run: 
           ls /opt/python
+          ls
+          pwd
+          ls ~
+          ls /
+          ls /root
       - name: Install setuptools
         run: |
           /opt/python/cp38-cp38/bin/python -m pip install setuptools
