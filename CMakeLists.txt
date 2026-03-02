@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.15...3.30)
+
 project(fast_colorthief_backend)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -O3")
