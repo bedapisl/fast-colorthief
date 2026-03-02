@@ -22,7 +22,6 @@ jobs:
       - name: Build wheels
         run: |
           cd /fast_colorthief/fast-colorthief/
-          /opt/python/cp36-cp36m/bin/python setup.py bdist_wheel
           /opt/python/cp37-cp37m/bin/python setup.py bdist_wheel
           /opt/python/cp38-cp38/bin/python setup.py bdist_wheel
           /opt/python/cp39-cp39/bin/python setup.py bdist_wheel
