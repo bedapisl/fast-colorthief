@@ -8,14 +8,18 @@ jobs:
       image: quay.io/pypa/manylinux_2_28_x86_64
 
     steps:
-      - name: Checkout fast-colorthief
-        run: |
-          cd /
-          mkdir fast_colorthief
-          cd fast_colorthief/
-          git clone https://github.com/bedapisl/fast-colorthief
-          cd fast-colorthief/
-          git submodule update --init --recursive
+      # - name: Checkout fast-colorthief
+      #   run: |
+      #     cd /
+      #     mkdir fast_colorthief
+      #     cd fast_colorthief/
+      #     git clone https://github.com/bedapisl/fast-colorthief
+      #     cd fast-colorthief/
+      #     git submodule update --init --recursive
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: List available Python versions
         run: 
           ls /opt/python
