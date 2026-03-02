@@ -29,6 +29,8 @@ jobs:
           /opt/python/cp310-cp310/bin/python setup.py bdist_wheel
           /opt/python/cp311-cp311/bin/python setup.py bdist_wheel
           /opt/python/cp312-cp312/bin/python setup.py bdist_wheel
+          /opt/python/cp313-cp313/bin/python setup.py bdist_wheel
+          /opt/python/cp314-cp314/bin/python setup.py bdist_wheel
       - name: Auditwheel & publish
         run: |
           cd /fast_colorthief/fast-colorthief/
