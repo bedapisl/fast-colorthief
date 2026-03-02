@@ -19,6 +19,15 @@ jobs:
       - name: List available Python versions
         run: 
           ls /opt/python
+      - name: Install setuptools
+        run:
+          /opt/python/cp38-cp38/bin/python -m pip install setuptools
+          /opt/python/cp39-cp39/bin/python -m pip install setuptools
+          /opt/python/cp310-cp310/bin/python -m pip install setuptools
+          /opt/python/cp311-cp311/bin/python -m pip install setuptools
+          /opt/python/cp312-cp312/bin/python -m pip install setuptools
+          /opt/python/cp313-cp313/bin/python -m pip install setuptools
+          /opt/python/cp314-cp314/bin/python -m pip install setuptools
       - name: Build wheels
         run: |
           cd /fast_colorthief/fast-colorthief/
