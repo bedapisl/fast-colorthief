@@ -21,13 +21,13 @@ jobs:
         with:
           submodules: recursive
       - name: List available Python versions
-        run: |
+        run:
           ls /opt/python
-          ls
-          pwd
-          ls ~
-          ls /
-          ls /root
+          # ls
+          # pwd
+          # ls ~
+          # ls /
+          # ls /root
       - name: Install setuptools
         run: |
           /opt/python/cp38-cp38/bin/python -m pip install setuptools
@@ -39,7 +39,6 @@ jobs:
           /opt/python/cp314-cp314/bin/python -m pip install setuptools
       - name: Build wheels
         run: |
-          cd fast-colorthief
           /opt/python/cp38-cp38/bin/python setup.py bdist_wheel
           /opt/python/cp39-cp39/bin/python setup.py bdist_wheel
           /opt/python/cp310-cp310/bin/python setup.py bdist_wheel
@@ -49,7 +48,6 @@ jobs:
           /opt/python/cp314-cp314/bin/python setup.py bdist_wheel
       - name: Auditwheel & publish
         run: |
-          cd fast-colorthief
           /opt/python/cp39-cp39/bin/pip install auditwheel twine
           auditwheel repair dist/*
           /opt/python/cp39-cp39/bin/python -m twine upload -u __token__  -p ${{ secrets.PYPI_UPLOAD_TOKEN }} wheelhouse/*
