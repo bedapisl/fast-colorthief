@@ -39,11 +39,6 @@ jobs:
           /opt/python/cp314-cp314/bin/python -m pip install setuptools
       - name: Build wheels
         run: |
-          /opt/python/cp38-cp38/bin/python setup.py bdist_wheel
-          /opt/python/cp39-cp39/bin/python setup.py bdist_wheel
-          /opt/python/cp310-cp310/bin/python setup.py bdist_wheel
-          /opt/python/cp311-cp311/bin/python setup.py bdist_wheel
-          /opt/python/cp312-cp312/bin/python setup.py bdist_wheel
           /opt/python/cp313-cp313/bin/python setup.py bdist_wheel
           /opt/python/cp314-cp314/bin/python setup.py bdist_wheel
       - name: Auditwheel & publish
