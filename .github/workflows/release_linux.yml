@@ -8,14 +8,6 @@ jobs:
       image: quay.io/pypa/manylinux_2_28_x86_64
 
     steps:
-      # - name: Checkout fast-colorthief
-      #   run: |
-      #     cd /
-      #     mkdir fast_colorthief
-      #     cd fast_colorthief/
-      #     git clone https://github.com/bedapisl/fast-colorthief
-      #     cd fast-colorthief/
-      #     git submodule update --init --recursive
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -23,11 +15,6 @@ jobs:
       - name: List available Python versions
         run:
           ls /opt/python
-          # ls
-          # pwd
-          # ls ~
-          # ls /
-          # ls /root
       - name: Install setuptools
         run: |
           /opt/python/cp38-cp38/bin/python -m pip install setuptools
@@ -39,6 +26,11 @@ jobs:
           /opt/python/cp314-cp314/bin/python -m pip install setuptools
       - name: Build wheels
         run: |
+          /opt/python/cp38-cp38/bin/python setup.py bdist_wheel
+          /opt/python/cp39-cp39/bin/python setup.py bdist_wheel
+          /opt/python/cp310-cp310/bin/python setup.py bdist_wheel
+          /opt/python/cp311-cp311/bin/python setup.py bdist_wheel
+          /opt/python/cp312-cp312/bin/python setup.py bdist_wheel
           /opt/python/cp313-cp313/bin/python setup.py bdist_wheel
           /opt/python/cp314-cp314/bin/python setup.py bdist_wheel
       - name: Auditwheel & publish
